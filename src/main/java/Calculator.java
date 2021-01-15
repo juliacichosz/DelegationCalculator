@@ -1,5 +1,6 @@
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -7,15 +8,25 @@ import java.time.temporal.ChronoUnit;
 public class Calculator {
 
     long parseToDays(long hours) {
-        return hours / 24;
+        return Duration.ofHours(hours).toDays();
     }
 
     long parseToHours(long minutes) {
-        return minutes / 60;
+        return Duration.ofMinutes(minutes).toHours();
+    }
+
+    long parseToMinutes(long hours) {
+        return Duration.ofHours(hours).toMinutes();
     }
 
     long parseMinutesWithoutFullHours(long minutes) {
-        return minutes % 60;
+        long hours = parseToHours(minutes);
+        long minutesOfFullHours = parseToMinutes(hours);
+        return minutes - minutesOfFullHours;
+    }
+
+    long parseToHoursFromDays(long days) {
+        return Duration.ofDays(days).toHours();
     }
 
     boolean anyFullDays(long hours, long minutes) {
@@ -35,7 +46,7 @@ public class Calculator {
     }
 
     BigDecimal countRateFor8To12Hours(BigDecimal rate) {
-        return rate.multiply(new BigDecimal("0.5"));
+        return rate.divide(new BigDecimal(2), RoundingMode.HALF_EVEN);
     }
 
     BigDecimal countRateForTo8Hours(BigDecimal rate) {
@@ -49,7 +60,7 @@ public class Calculator {
         BigDecimal totalRate = BigDecimal.ZERO;
         long daysAmount = parseToDays(hours);
 
-        hours -= daysAmount * 24;
+        hours -= parseToHoursFromDays(daysAmount);
         if(anyFullDays(hours, minutes)) {
             daysAmount += 1;
             hours = 0;
@@ -79,6 +90,16 @@ public class Calculator {
         return summaricRateForAllDays(hours, minutes, dailyRate).setScale(2, RoundingMode.HALF_EVEN);
     }
 
+    long getZonedDateTimeDifferenceInMinutes(ZonedDateTime start, ZonedDateTime end){
+        ChronoUnit unit = ChronoUnit.MINUTES;
+        return unit.between(start, end);
+    }
+
+    static ZonedDateTime convertTimeFromStringToZonedDateTime(String time) {
+        var formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm z");
+        return ZonedDateTime.parse(time, formatter);
+    }
+
     long calculateTimeOnDelegationInMinutes(String start, String end) {
         ZonedDateTime startZoned = convertTimeFromStringToZonedDateTime(start);
         ZonedDateTime endZoned = convertTimeFromStringToZonedDateTime(end);
@@ -88,15 +109,5 @@ public class Calculator {
     BigDecimal calculate(String start, String end, BigDecimal dailyRate) {
         long timeInMinutes = calculateTimeOnDelegationInMinutes(start, end);
         return calculateTotalRate(timeInMinutes, dailyRate);
-    }
-
-    long getZonedDateTimeDifferenceInMinutes(ZonedDateTime start, ZonedDateTime end){
-        ChronoUnit unit = ChronoUnit.MINUTES;
-        return unit.between(start, end);
-    }
-
-    static ZonedDateTime convertTimeFromStringToZonedDateTime(String time) {
-        var formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm z");
-        return ZonedDateTime.parse(time, formatter);
     }
 }
