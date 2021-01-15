@@ -80,7 +80,7 @@ public class Calculator {
     }
 
     BigDecimal calculateTotalRate(long totalTimeInMinutes, BigDecimal dailyRate) {
-        if(totalTimeInMinutes == 0) {
+        if(totalTimeInMinutes <= 0) {
             return (BigDecimal.ZERO).setScale(2, RoundingMode.HALF_EVEN);
         }
 
