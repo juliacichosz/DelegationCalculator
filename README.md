@@ -1,5 +1,5 @@
 # DelegationCalculator
-Delegation calculator created as exercise for course on college. Includes date and time management.
+Delegation calculator created as exercise for Java classes on Jagiellonian University. Includes date and time management.
 
 ## Parameters:  
 * *start* - begin of the delegation in format: *yyyy-mm-dd HH:MM timezone*  
