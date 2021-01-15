@@ -6,7 +6,7 @@ Delegation calculator created as exercise for course on college. Includes date a
 * *end* - end of the delegation in format: *yyyy-mm-dd HH:MM timezone*  
 * *dailyRate* - delegation daily rate    
   
-##Calculating rules:  
+## Calculating rules:  
 * for full day: *dailyRate*  
 * to 8 hours: *dailyRate* / 3  
 * from 8 to 12 hours: *dailyRate* / 2  
